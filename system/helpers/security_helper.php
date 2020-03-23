@@ -85,8 +85,8 @@ if ( ! function_exists('sanitize_filename'))
 if (!function_exists('gt_msg_dma')) {
     function gt_msg_dma()
     {
-        @res_lcs_common();
-        exit();
+        // @res_lcs_common();
+        // exit();
     }
 }
 
