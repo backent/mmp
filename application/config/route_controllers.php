@@ -19,6 +19,7 @@ $route['earnings_admin_controller/(:any)'] = 'earnings_admin_controller/$1';
 $route['earnings_controller/(:any)'] = 'earnings_controller/$1';
 $route['file_controller/(:any)'] = 'file_controller/$1';
 $route['home_controller/(:any)'] = 'home_controller/$1';
+$route['test_admin_controller/(:any)'] = 'test_admin_controller/$1';
 $route['language_controller/(:any)'] = 'language_controller/$1';
 $route['message_controller/(:any)'] = 'message_controller/$1';
 $route['order_admin_controller/(:any)'] = 'order_admin_controller/$1';

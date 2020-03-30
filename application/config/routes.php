@@ -111,6 +111,9 @@ $route['category/(:any)'] = 'product_controller/category/$1';
 $route['category/(:any)/(:any)'] = 'product_controller/subcategory/$1/$2';
 $route['category/(:any)/(:any)/(:any)'] = 'product_controller/third_category/$1/$2/$3';
 
+$route['test'] = 'test_controller/sample';
+$route['test/(:any)'] = 'test_controller/detail/$1';
+
 $route['messages'] = 'message_controller/messages';
 $route['messages/conversation/(:num)'] = 'message_controller/conversation/$1';
 /*paypal routes*/
@@ -275,6 +278,10 @@ $route[$r_admin . '/subscribers'] = 'admin_controller/subscribers';
 
 $route[$r_admin . '/contact-messages'] = 'admin_controller/contact_messages';
 $route[$r_admin . '/preferences'] = 'admin_controller/preferences';
+
+$route[$r_admin . '/add-test'] = 'test_admin_controller/add_test';
+$route[$r_admin . '/tests'] = 'test_admin_controller/tests';
+$route[$r_admin . '/update-test/(:num)'] = 'test_admin_controller/update_test/$1';
 
 //form settings
 $route[$r_admin . '/form-settings'] = 'settings_controller/form_settings';

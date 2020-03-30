@@ -971,4 +971,19 @@ $lang["confirm_order_received_warning"] = "When you receive your order, please c
 $lang["confirm_approve_order"] = "Are you sure you want to confirm this order?";
 $lang["invalid_withdrawal_amount"] = "Invalid withdrawal amount!";
 $lang["active_payment_request_error"] = "You already have an active payment request! Once this is complete, you can make a new request.";
+
+$lang["tests"] = "Tests";
+$lang["add_test"] = "Add Test";
+$lang["update_test"] = "Update Test";
+$lang["confirm_test"] = "Are you sure ?";
+$lang["msg_test_added"] = "Test successfully added!";
+$lang["confirm_tests"] = "Are you sure ?";
+
+
+
+$lang["menu_test_parent"] = "Menu Test Parent";
+$lang["menu_tests"] = "Menu Tests";
+
+
+
 ?>

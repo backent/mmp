@@ -88,6 +88,36 @@ function delete_selected_products(message) {
 	});
 };
 
+//delete selected tests
+function delete_selected_tests(message) {
+	swal({
+		text: message,
+		icon: "warning",
+		buttons: true,
+		buttons: [sweetalert_cancel, sweetalert_ok],
+		dangerMode: true,
+	}).then(function (willDelete) {
+		if (willDelete) {
+			var test_ids = [];
+			$("input[name='checkbox-table']:checked").each(function () {
+				test_ids.push(this.value);
+			});
+			var data = {
+				'test_ids': test_ids,
+			};
+			data[csfr_token_name] = $.cookie(csfr_cookie_name);
+			$.ajax({
+				type: "POST",
+				url: base_url + "test_admin_controller/delete_selected_tests",
+				data: data,
+				success: function (response) {
+					location.reload();
+				}
+			});
+		}
+	});
+};
+
 //delete selected products permanently
 function delete_selected_products_permanently(message) {
 	swal({

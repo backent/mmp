@@ -171,6 +171,16 @@
                         <li><a href="<?php echo admin_url(); ?>promoted-products-transactions"> <?php echo trans("transactions"); ?></a></li>
                     </ul>
                 </li>
+                <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-dollar" aria-hidden="true"></i>
+                        <span><?php echo trans("menu_test_parent"); ?></span>
+                        <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li><a href="<?php echo admin_url(); ?>tests"> <?php echo trans("menu_tests"); ?></a></li>
+                    </ul>
+                </li>
 				<li>
 					<a href="<?php echo admin_url(); ?>quote-requests">
 						<i class="fa fa-tag"></i> <span><?php echo trans("quote_requests"); ?></span>
