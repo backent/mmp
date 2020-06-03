@@ -57,6 +57,8 @@ $route['error-404'] = 'home_controller/error_404';
 
 include_once "route_controllers.php";
 include_once "route_slugs.php";
+include_once "route_apis.php";
+
 //routes
 $r_admin = $custom_slug_array["admin"];
 

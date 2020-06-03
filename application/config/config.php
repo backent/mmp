@@ -455,7 +455,7 @@ $config['csrf_token_name'] = 'csrf_modesy_token';
 $config['csrf_cookie_name'] = 'csrf_modesy_token';
 $config['csrf_expire'] = 7200;
 $config['csrf_regenerate'] = TRUE;
-$config['csrf_exclude_uris'] = array('cart_controller/iyzico_payment_post', 'promote_controller/iyzico_payment_post', 'file_controller/upload_image_session', 'file_controller/upload_image', 'file_controller/upload_video', 'file_controller/upload_audio', 'file_controller/upload_digital_files');
+$config['csrf_exclude_uris'] = array('cart_controller/iyzico_payment_post', 'promote_controller/iyzico_payment_post', 'file_controller/upload_image_session', 'file_controller/upload_image', 'file_controller/upload_video', 'file_controller/upload_audio', 'file_controller/upload_digital_files', 'api/.*+');
 
 /*
 |--------------------------------------------------------------------------
