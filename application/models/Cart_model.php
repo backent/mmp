@@ -194,6 +194,8 @@ class Cart_model extends CI_Model
 		$std->shipping_country_id = $this->input->post('shipping_country_id', true);
 		$std->shipping_state = $this->input->post('shipping_state', true);
 		$std->shipping_city = $this->input->post('shipping_city', true);
+		$std->shipping_state_id = $this->input->post('shipping_state_id', true);
+		$std->shipping_city_id = $this->input->post('shipping_city_id', true);
 		$std->shipping_zip_code = $this->input->post('shipping_zip_code', true);
 		$std->billing_first_name = $this->input->post('billing_first_name', true);
 		$std->billing_last_name = $this->input->post('billing_last_name', true);
@@ -279,6 +281,8 @@ class Cart_model extends CI_Model
 		$std->shipping_country_id = $row->shipping_country_id;
 		$std->shipping_state = $row->shipping_state;
 		$std->shipping_city = $row->shipping_city;
+		$std->shipping_state_id = $row->shipping_state_id;
+		$std->shipping_city_id = $row->shipping_city_id;
 		$std->shipping_zip_code = $row->shipping_zip_code;
 		$std->billing_first_name = $row->shipping_first_name;
 		$std->billing_last_name = $row->shipping_last_name;
@@ -345,6 +349,7 @@ class Cart_model extends CI_Model
 						$item->purchase_type = $cart_item->purchase_type;
 						$item->quote_request_id = $cart_item->quote_request_id;
 						$item->is_quantity_available = $this->is_quantity_available($product);
+						$item->city_id = $product->city_id;
 						if ($this->form_settings->shipping != 1) {
 							$item->shipping_cost = 0;
 						}
@@ -425,6 +430,63 @@ class Cart_model extends CI_Model
 			return true;
 		}
 		return false;
+	}
+
+	//set cart shipping items session
+	public function set_sess_cart_shipping_items()
+	{
+
+		$shipping_provider = $this->input->post('shipping_provider', true);
+		$shipping_service_code = $this->input->post('shipping_service_code', true);
+			
+		$data['shipping_provider'] = $shipping_provider;
+		$data['shipping_service_code'] = $shipping_service_code;
+
+		$this->session->set_userdata('mds_cart_shipping_item', $data);
+	}
+
+	//get cart shipping items session
+	public function get_sess_cart_shipping_items()
+	{
+		$data = $this->session->userdata('mds_cart_shipping_item');
+		
+		$cart_items = $this->cart_model->get_sess_cart_items();
+
+		$my_shipping_address = $this->cart_model->get_sess_cart_shipping_address();
+
+		foreach ($cart_items as $key => $value) {
+			$shipping_provider_code = $data['shipping_provider'][$value->cart_item_id];
+			
+			$data_ship['origin'] = $value->city_id;
+			$data_ship['destination'] = $my_shipping_address->shipping_city_id;
+			$data_ship['weight'] = 1;
+			$data_ship['courier'] = $shipping_provider_code;
+
+			$json = __CURL_RAJA_ONGKIR('POST', '/cost', $data_ship);
+			$result = json_decode($json, true);	
+				
+
+			$services = [];
+
+			$services_group_cost = [];
+			foreach ($result['rajaongkir']['results'] as $key2 => $value2) {
+				foreach ($value2['costs'] as $key3 => $value3) {
+					$service['value'] = $value3['service'];
+					$service['label'] = $value3['description'] .  ' - ' . $value3['cost'][0]['value'] . ' - ' .$value3['cost'][0]['etd'];
+					$service['price'] = $value3['cost'][0]['value'];
+					$services[] = $service;
+				
+					// $services_group_cost[$value3['service']] = 
+				}
+			}
+
+			$list[$value->cart_item_id] = $services;
+
+		}
+
+		$data['services'] = $list;
+
+		return $data;
 	}
 
 	//unset cart items session

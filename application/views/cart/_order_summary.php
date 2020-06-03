@@ -5,8 +5,21 @@
 	<div class="right">
 		<?php $is_physical = false; ?>
 		<div class="cart-order-details">
-			<?php if (!empty($cart_items)):
+			<?php 
+
+			$total_shipping_price = 0;
+
+			if (!empty($cart_items)):
 				foreach ($cart_items as $cart_item):
+
+
+					$shipping_price = 0;
+					foreach ($shipping_items['services'][$cart_item->cart_item_id] as $key => $value){
+						if($value['value'] == $shipping_items['shipping_service_code'][$cart_item->cart_item_id]) $shipping_price = $value['price'];
+					}
+
+					$total_shipping_price += $shipping_price;
+
 					$product = get_available_product($cart_item->product_id);
 					if (!empty($product)):
 						if ($product->product_type == 'physical') {
@@ -45,7 +58,10 @@
 								<?php if ($product->product_type != 'digital' && $this->form_settings->shipping == 1): ?>
 									<div class="list-item">
 										<label><?php echo trans("shipping"); ?>:</label>
-										<strong><?php echo print_price($cart_item->shipping_cost, $cart_item->currency); ?></strong>
+										<strong><?php 
+											$currency = get_currency($cart_item->currency);
+											echo $currency.' '.number_format($shipping_price, 0, ',', '.'); 
+										?></strong>
 									</div>
 								<?php endif; ?>
 
@@ -60,12 +76,21 @@
 		</p>
 		<?php if ($is_physical  && $this->form_settings->shipping == 1): ?>
 			<p>
-				<?php echo trans("shipping"); ?><span class="float-right"><?php echo print_price($cart_total->shipping_cost, $this->payment_settings->default_product_currency); ?></span>
+				<?php echo trans("shipping"); ?><span class="float-right"><?php 
+
+					$currency = get_currency($this->payment_settings->default_product_currency);
+					echo $currency.' '.number_format($total_shipping_price, 0, ',', '.'); 
+
+				 ?></span>
 			</p>
 		<?php endif; ?>
 		<p class="line-seperator"></p>
 		<p>
-			<strong><?php echo trans("total"); ?><span class="float-right"><?php echo print_price($cart_total->total, $this->payment_settings->default_product_currency); ?></span></strong>
+			<strong><?php echo trans("total"); ?><span class="float-right"><?php 
+				$currency = get_currency($this->payment_settings->default_product_currency);
+					echo $currency.' '.number_format(($cart_total->total/100 + $total_shipping_price), 0, ',', '.'); 
+
+			 ?></span></strong>
 		</p>
 
 	</div>

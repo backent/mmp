@@ -985,5 +985,15 @@ $lang["menu_test_parent"] = "Menu Test Parent";
 $lang["menu_tests"] = "Menu Tests";
 
 
+$lang["province"] = "Province";
+$lang["select_province"] = "Select Province";
+
+$lang["subdistrict"] = "Sub District";
+$lang["select_subdistrict"] = "Select Sub District";
+
+$lang["shipping_provider"] = "Shipping Provider";
+$lang["select_shipping_provider"] = "Select Shipping Provider";
+
+
 
 ?>

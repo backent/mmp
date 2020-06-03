@@ -1,0 +1,24 @@
+cara instalasi
+1. extract file zip ke document root (contoh: /var/www)
+2. bikin database dengan nama modesy
+3. import database yang ada di file modesy.sql
+4. bikin host dengan nama marketplace.loc
+5. jalankan marketplace.loc
+
+
+Testing Login :
+
+Admin
+admin@mail.com
+Asdasd123!!
+
+Seller
+chaizzxx@gmail.com
+Asdasd123!!
+
+Buyer
+member@mail.com
+Asdasd123!!
+
+
+

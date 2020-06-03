@@ -1930,4 +1930,45 @@ if (!function_exists('convert_to_xml_character')) {
 		return str_replace(array('&', '<', '>', '\'', '"'), array('&amp;', '&lt;', '&gt;', '&apos;', '&quot;'), $string);
 	}
 }
+
+if (!function_exists('cetak')) {
+	function cetak($string)
+	{
+		echo "<pre>";
+		print_r($string);
+		echo "</pre>";
+	}
+}
+
+if (!function_exists('dump')) {
+	function dump($string)
+	{
+		echo "<pre>";
+		var_dump($string);
+		echo "</pre>";
+	}
+}
+
+if (!function_exists('__CURL')) {
+	function __CURL_RAJA_ONGKIR($method, $url, $data = null)
+	{
+			$ch = curl_init();
+
+			curl_setopt($ch, CURLOPT_URL, 'https://api.rajaongkir.com/starter' . $url);
+			curl_setopt($ch, CURLOPT_HTTPHEADER, array('key: 5b1b1fb3f0d2cef6f6c782b1321f39a8'));
+
+			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
+			
+			if(!empty($data)) curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			$server_output = curl_exec($ch);
+
+			curl_close ($ch);
+
+			return $server_output;
+	}
+}
+
+
 ?>

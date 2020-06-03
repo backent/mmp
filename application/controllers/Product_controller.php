@@ -343,6 +343,10 @@ class Product_controller extends Home_Core_Controller
 		$data['license_keys'] = $this->product_model->get_license_keys($data["product"]->id);
 
 		$data["site_settings"] = get_site_settings();
+
+		$provinces_json = __CURL_RAJA_ONGKIR('GET', '/province');
+		$data['provinces'] = json_decode($provinces_json, true)['rajaongkir']['results'];
+
 		$this->load->view('partials/_header', $data);
 		$this->load->view('product/edit_product_details');
 		$this->load->view('partials/_footer');

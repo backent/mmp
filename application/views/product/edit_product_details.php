@@ -381,53 +381,25 @@ if ($product->is_draft == 1) {
 											</div>
 											<div class="form-box-body">
 												<div class="form-group">
+
 													<div class="row">
 														<div class="col-12 col-sm-4 m-b-15">
-															<?php if ($general_settings->default_product_location == 0): ?>
 																<div class="selectdiv">
-																	<select id="countries" name="country_id" class="form-control" onchange="get_states(this.value);" <?php echo ($form_settings->product_location_required == 1) ? 'required' : ''; ?>>
-																		<option value=""><?php echo trans('country'); ?></option>
-																		<?php foreach ($countries as $item): ?>
-																			<option value="<?php echo $item->id; ?>" <?php echo ($item->id == $country_id) ? 'selected' : ''; ?>><?php echo html_escape($item->name); ?></option>
-																		<?php endforeach; ?>
-																	</select>
+																	<select id="states" name="state_id" class="form-control" required>
+                                      <option value="" selected><?php echo trans("select_province"); ?></option>
+                                      <?php foreach ($provinces as $item): ?>
+                                          <option value="<?php echo $item['province_id']; ?>"><?php echo html_escape($item['province']); ?></option>
+                                      <?php endforeach; ?>
+                                  </select>
 																</div>
-															<?php else: ?>
-																<div class="selectdiv">
-																	<select id="countries" name="country_id" class="form-control" required>
-																		<?php foreach ($countries as $item): ?>
-																			<?php if ($item->id == $general_settings->default_product_location): ?>
-																				<option value="<?php echo $item->id; ?>" selected><?php echo html_escape($item->name); ?></option>
-																			<?php endif; ?>
-																		<?php endforeach; ?>
-																	</select>
-																</div>
-															<?php endif; ?>
 														</div>
-														<div class="col-12 col-sm-4 m-b-15">
+														<div class="col-12 col-sm-6 m-b-15">
 															<div class="selectdiv">
-																<select id="states" name="state_id" class="form-control" onchange="get_cities(this.value);" <?php echo ($form_settings->product_location_required == 1) ? 'required' : ''; ?>>
-																	<option value=""><?php echo trans('state'); ?></option>
-																	<?php
-																	if (!empty($states)):
-																		foreach ($states as $item): ?>
-																			<option value="<?php echo $item->id; ?>" <?php echo ($item->id == $state_id) ? 'selected' : ''; ?>><?php echo html_escape($item->name); ?></option>
-																		<?php endforeach;
-																	endif; ?>
-																</select>
+																<select id="cities" name="city_id" class="form-control" required></select>
 															</div>
 														</div>
-														<div class="col-12 col-sm-4 m-b-15">
+														<div class="col-12 col-sm-6 m-b-15">
 															<div class="selectdiv">
-																<select id="cities" name="city_id" class="form-control" onchange="update_product_map();">
-																	<option value=""><?php echo trans('city'); ?></option>
-																	<?php
-																	if (!empty($cities)):
-																		foreach ($cities as $item): ?>
-																			<option value="<?php echo $item->id; ?>" <?php echo ($item->id == $city_id) ? 'selected' : ''; ?>><?php echo html_escape($item->name); ?></option>
-																		<?php endforeach;
-																	endif; ?>
-																</select>
 															</div>
 														</div>
 													</div>
@@ -570,5 +542,46 @@ if ($product->is_draft == 1) {
 	$('.datepicker').datepicker({
 		language: 'en'
 	});
+
+</script>
+
+
+
+<script type="text/javascript">
+	$('#states').change(function() {
+		$('#cities').html('<option>Loading...</option>')
+		$.ajax({
+	        type: "GET",
+	        url: base_url + "ajax_controller/cities/" + $('#states').val(),
+	        success: function (response) {
+	        	var cities = JSON.parse(response);
+
+	        	var options = "";
+	        	for (var i = 0; i < cities.length; i++) {
+	        		var city = cities[i]
+	        		options += "<option value='"+city.city_id+"'>"+city.city_name+"</option>"
+	        	}
+	        	$('#cities').html(options)
+	        }
+	    });
+	});
+
+	$('#cities').change(function() {
+		get_cost();
+	});
+
+	$('#shipping_provider').change(function() {
+		get_cost();
+	});
+
+	function get_cost() {
+		$.ajax({
+	        type: "GET",
+	        url: base_url + "ajax_controller/cost/" + $('#cities').val() + '/' + $('#shipping_provider').val(),
+	        success: function (response) {
+	        	console.log(response)
+	        }
+	    });
+	}
 
 </script>

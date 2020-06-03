@@ -326,4 +326,56 @@ class Ajax_controller extends Home_Core_Controller
 		$this->email_model->send_email($data);
 	}
 
+
+	//GET Cities
+	public function cities($province_id)
+	{
+		$city_json = __CURL_RAJA_ONGKIR('GET', '/city?province=' . $province_id);
+		$cities = json_decode($city_json, true)['rajaongkir']['results'];
+		echo json_encode($cities);
+	}
+
+	//GET list shipping services
+	public function cost($city_id, $shipping_provider_id, $cart_item_id)
+	{
+
+		$cart_items = $this->cart_model->get_sess_cart_items();
+
+		foreach ($cart_items as $key => $value) {
+
+			if ($value->cart_item_id == $cart_item_id)
+			$data['origin'] = $value->city_id;
+			$data['destination'] = $city_id;
+			$data['weight'] = 1;
+			$data['courier'] = $shipping_provider_id;
+
+
+			$json = __CURL_RAJA_ONGKIR('POST', '/cost', $data);
+			$result = json_decode($json, true);	
+
+			$return = [];
+			if (!empty($result['rajaongkir'])) {
+				if (!empty($result['rajaongkir']['status']['code'])) {
+					if ($result['rajaongkir']['status']['code'] == '200') {
+						$return_per_product['status'] = $result['rajaongkir']['status'];
+						$return_per_product['results'] = $result['rajaongkir']['results'];
+					} else {
+						$return_per_product = $result['rajaongkir']['status'];
+					}
+				} else {
+					$return_per_product['status']['code'] = '502';
+					$return_per_product['status']['code'] = 'No Status Code';
+				}
+			} else {
+				$return_per_product['status']['code'] = '502';
+				$return_per_product['status']['code'] = 'No Shipping Information';
+			}
+
+			// $return[] = $return_per_product;
+
+		}
+		
+		echo json_encode($return_per_product);
+	}
+
 }

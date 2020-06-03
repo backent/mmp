@@ -52,8 +52,6 @@
 														</div>
 														<?php if ($product->product_type != 'digital' && $this->form_settings->shipping == 1): ?>
 															<div class="list-item">
-																<label><?php echo trans("shipping"); ?>:</label>
-																<strong><?php echo print_price($cart_item->shipping_cost, $cart_item->currency); ?></strong>
 															</div>
 														<?php endif; ?>
 														<a href="javascript:void(0)" class="btn btn-md btn-outline-gray btn-cart-remove" onclick="remove_from_cart('<?php echo $cart_item->cart_item_id; ?>');"><i class="icon-close"></i> <?php echo trans("remove"); ?></a>

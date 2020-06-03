@@ -122,6 +122,20 @@ class Cart_controller extends Home_Core_Controller
 		$data['cart_total'] = $this->cart_model->get_sess_cart_total();
 		$data["shipping_address"] = $this->cart_model->get_sess_cart_shipping_address();
 
+		//countries
+		$provinces_json = __CURL_RAJA_ONGKIR('GET', '/province');
+		$data['provinces'] = json_decode($provinces_json, true)['rajaongkir']['results'];
+
+		$city_json = __CURL_RAJA_ONGKIR('GET', '/city?province=' . $data["shipping_address"]->shipping_state_id);
+		$cities = json_decode($city_json, true)['rajaongkir']['results'];
+
+
+		$data['cities'] = $cities;
+
+		$shipping_items = $this->cart_model->get_sess_cart_shipping_items();
+
+		$data['shipping_items'] = $shipping_items;
+
 		$this->load->view('partials/_header', $data);
 		$this->load->view('cart/shipping', $data);
 		$this->load->view('partials/_footer');
@@ -133,6 +147,8 @@ class Cart_controller extends Home_Core_Controller
 	public function shipping_post()
 	{
 		$this->cart_model->set_sess_cart_shipping_address();
+		$this->cart_model->set_sess_cart_shipping_items();
+
 		redirect(lang_base_url() . "cart/payment-method?payment_type=sale");
 	}
 
@@ -181,6 +197,9 @@ class Cart_controller extends Home_Core_Controller
 			$data['cart_has_digital_product'] = $this->cart_model->check_cart_has_digital_product();
 			$this->cart_model->unset_sess_cart_payment_method();
 		}
+
+		$shipping_items = $this->cart_model->get_sess_cart_shipping_items();
+		$data['shipping_items'] = $shipping_items;
 
 		$this->load->view('partials/_header', $data);
 		$this->load->view('cart/payment_method', $data);
@@ -259,6 +278,9 @@ class Cart_controller extends Home_Core_Controller
 			$this->load->library('pagseguro');
 			$data['session_code'] = $this->pagseguro->get_session_code();
 		}
+
+		$shipping_items = $this->cart_model->get_sess_cart_shipping_items();
+		$data['shipping_items'] = $shipping_items;
 
 		$this->load->view('partials/_header', $data);
 		$this->load->view('cart/payment', $data);
