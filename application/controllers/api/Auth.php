@@ -17,41 +17,79 @@ class Auth extends RestController {
             $data = array(
                 'result' => 1
             );
-            echo json_encode($data);
-            exit();
+            $this->response($data, 200);
         }
         //validate inputs
         $this->form_validation->set_rules('email', trans("email_address"), 'required|xss_clean|max_length[100]');
         $this->form_validation->set_rules('password', trans("password"), 'required|xss_clean|max_length[30]');
+        
         if ($this->form_validation->run() == false) {
-            $this->session->set_flashdata('errors', validation_errors());
-            $this->session->set_flashdata('form_data', $this->auth_model->input_values());
-            $this->load->view('partials/_messages');
+            $this->response([
+                'message' => validation_errors(null,null)
+            ], 400);
         } else {
             if ($this->auth_model->login()) {
                 $data = array(
                     'result' => 1
                 );
-                echo json_encode($data);
+                $this->response($data, 200);
             } else {
                 $data = array(
                     'result' => 0,
-                    'error_message' => $this->load->view('partials/_messages', '', true)
+                    'message' => 'Wrong email or password'
                 );
-                echo json_encode($data);
+                $this->response($data, 422);
             }
-            reset_flash_data();
         }
     }
 
     public function logout_post() {
         $this->auth_model->logout();
-        echo "logouted";
+        $this->response([], 200);
     }
 
-    public function my_get() {
-        $this->response([
-            'user' => $this->session->get_userdata()
-        ],200);
+    public function register_post() {
+        //validate inputs
+        $this->form_validation->set_rules('username', trans("username"), 'required|xss_clean|min_length[4]|max_length[100]');
+        $this->form_validation->set_rules('email', trans("email_address"), 'required|xss_clean|max_length[200]');
+        $this->form_validation->set_rules('password', trans("password"), 'required|xss_clean|min_length[4]|max_length[50]');
+        $this->form_validation->set_rules('confirm_password', trans("password_confirm"), 'required|xss_clean|matches[password]');
+
+        if ($this->form_validation->run() === false) {
+            $this->response([
+                'message' => validation_errors(null,null)
+            ], 400);
+        } else {
+            $email = $this->input->post('email', true);
+            $username = $this->input->post('username', true);
+
+            //is email unique
+            if (!$this->auth_model->is_unique_email($email)) {
+                $this->response([
+                    'message' => trans("msg_email_unique_error")
+                ], 409);
+            }
+            //is username unique
+            if (!$this->auth_model->is_unique_username($username)) {
+                $this->response([
+                    'message' => trans("msg_email_unique_error")
+                ], 409);
+            }
+            //register
+            $user_id = $this->auth_model->register();
+            if ($user_id) {
+                $user = get_user($user_id);
+                //update slug
+                $this->auth_model->update_slug($user->id);
+                if ($this->general_settings->email_verification != 1) {
+                    $this->auth_model->login_direct($user);
+                    $this->response($user, 201);
+                }
+            } else {
+                $this->response([
+                    'message' => trans("msg_error")
+                ], 409);
+            }
+        }
     }
 }

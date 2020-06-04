@@ -1,6 +1,7 @@
 <?php
 
 require(APPPATH . 'libraries/Format.php');
+/*require(APPPATH . 'core/Core_Controller.php');*/
 
 defined('BASEPATH') or exit('No direct script access allowed');
 
@@ -12,7 +13,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
  *
  * @version         4.0.0
  */
-class RestController extends \CI_Controller
+class RestController extends Core_Controller
 {
     /**
      * This defines the rest format
@@ -2007,5 +2008,11 @@ class RestController extends \CI_Controller
             }
             exit;
         }
+    }
+
+    public function unauthenticated_user() {
+        $this->response([
+            'message' => "unauthenticated"
+        ], 401);
     }
 }
