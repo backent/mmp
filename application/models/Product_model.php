@@ -944,6 +944,25 @@ class Product_model extends Core_Model
 		return $query->result();
 	}
 
+	public function get_products_by_categories($category_ids)
+	{
+		$this->db->join('users', 'products.user_id = users.id');
+		$this->db->select('products.*, users.username as user_username, users.shop_name as shop_name, users.role as user_role, users.slug as user_slug');
+		$this->db->where('users.banned', 0);
+		$this->db->where('products.status', 1);
+		$this->db->where('products.visibility', 1);
+		$this->db->where("products.category_id IN (" . $category_ids . ")", NULL, FALSE);
+		$this->db->where('products.is_draft', 0);
+		$this->db->where('products.is_sold', 0);
+		$this->db->where('products.is_deleted', 0);
+		if ($this->general_settings->vendor_verification_system == 1) {
+			$this->db->where('users.role !=', 'member');
+		}
+		$this->db->order_by('products.created_at', 'DESC');
+		$query = $this->db->get('products');
+		return $query->result();
+	}
+
 	//get rss products by user
 	public function get_rss_products_by_user($user_id)
 	{

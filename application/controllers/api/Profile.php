@@ -12,6 +12,7 @@ class Profile extends RestController {
     }
 
     public function my_get() {
+        $this->auth_api();
     	$this->response(user(), 200);
     }
 

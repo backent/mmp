@@ -2015,4 +2015,17 @@ class RestController extends Core_Controller
             'message' => "unauthenticated"
         ], 401);
     }
+
+    public function auth_api() {
+        $ci =& get_instance();
+        $auth = $ci->auth_model->is_logged_in();
+        if (!$auth) {
+
+            $this->unauthenticated_user();
+        }
+    }
+
+    public function get_params() {
+        return $this->get(null, true);
+    }
 }
