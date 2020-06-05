@@ -2028,4 +2028,12 @@ class RestController extends Core_Controller
     public function get_params() {
         return $this->get(null, true);
     }
+
+    public function run_validation() {
+        if ($this->form_validation->run() === false) {
+            $this->response([
+                'message' => validation_errors(null,null)
+            ], 400);
+        }
+    }
 }

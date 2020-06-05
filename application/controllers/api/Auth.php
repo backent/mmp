@@ -23,23 +23,19 @@ class Auth extends RestController {
         $this->form_validation->set_rules('email', trans("email_address"), 'required|xss_clean|max_length[100]');
         $this->form_validation->set_rules('password', trans("password"), 'required|xss_clean|max_length[30]');
         
-        if ($this->form_validation->run() == false) {
-            $this->response([
-                'message' => validation_errors(null,null)
-            ], 400);
+        $this->run_validation();
+        
+        if ($this->auth_model->login()) {
+            $data = array(
+                'result' => 1
+            );
+            $this->response($data, 200);
         } else {
-            if ($this->auth_model->login()) {
-                $data = array(
-                    'result' => 1
-                );
-                $this->response($data, 200);
-            } else {
-                $data = array(
-                    'result' => 0,
-                    'message' => 'Wrong email or password'
-                );
-                $this->response($data, 422);
-            }
+            $data = array(
+                'result' => 0,
+                'message' => 'Wrong email or password'
+            );
+            $this->response($data, 422);
         }
     }
 
@@ -55,41 +51,37 @@ class Auth extends RestController {
         $this->form_validation->set_rules('password', trans("password"), 'required|xss_clean|min_length[4]|max_length[50]');
         $this->form_validation->set_rules('confirm_password', trans("password_confirm"), 'required|xss_clean|matches[password]');
 
-        if ($this->form_validation->run() === false) {
-            $this->response([
-                'message' => validation_errors(null,null)
-            ], 400);
-        } else {
-            $email = $this->input->post('email', true);
-            $username = $this->input->post('username', true);
+        $this->run_validation();
 
-            //is email unique
-            if (!$this->auth_model->is_unique_email($email)) {
-                $this->response([
-                    'message' => trans("msg_email_unique_error")
-                ], 409);
+        $email = $this->input->post('email', true);
+        $username = $this->input->post('username', true);
+
+        //is email unique
+        if (!$this->auth_model->is_unique_email($email)) {
+            $this->response([
+                'message' => trans("msg_email_unique_error")
+            ], 409);
+        }
+        //is username unique
+        if (!$this->auth_model->is_unique_username($username)) {
+            $this->response([
+                'message' => trans("msg_email_unique_error")
+            ], 409);
+        }
+        //register
+        $user_id = $this->auth_model->register();
+        if ($user_id) {
+            $user = get_user($user_id);
+            //update slug
+            $this->auth_model->update_slug($user->id);
+            if ($this->general_settings->email_verification != 1) {
+                $this->auth_model->login_direct($user);
+                $this->response($user, 201);
             }
-            //is username unique
-            if (!$this->auth_model->is_unique_username($username)) {
-                $this->response([
-                    'message' => trans("msg_email_unique_error")
-                ], 409);
-            }
-            //register
-            $user_id = $this->auth_model->register();
-            if ($user_id) {
-                $user = get_user($user_id);
-                //update slug
-                $this->auth_model->update_slug($user->id);
-                if ($this->general_settings->email_verification != 1) {
-                    $this->auth_model->login_direct($user);
-                    $this->response($user, 201);
-                }
-            } else {
-                $this->response([
-                    'message' => trans("msg_error")
-                ], 409);
-            }
+        } else {
+            $this->response([
+                'message' => trans("msg_error")
+            ], 409);
         }
     }
 }
