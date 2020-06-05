@@ -29,6 +29,36 @@ class Cart_model extends CI_Model
 		array_push($cart, $item);
 
 		$this->session->set_userdata('mds_shopping_cart', $cart);
+		return $item;
+	}
+
+	// api add to cart
+	public function api_add_to_cart($product)
+	{
+		if (!$this->check_item_quantity($product)) {
+			return false;
+		}
+		$cart = $this->get_sess_cart_items();
+		$quantity = $this->input->post('product_quantity', true);
+		$appended_variations = $this->api_append_selected_variations($product->id);
+
+		$item = new stdClass();
+		$item->cart_item_id = generate_unique_id();
+		$item->product_id = $product->id;
+		$item->product_type = $product->product_type;
+		$item->product_title = $product->title . " " . $appended_variations;
+		$item->quantity = $quantity;
+		$item->unit_price = $product->price;
+		$item->total_price = $product->price * $quantity;
+		$item->currency = $product->currency;
+		$item->shipping_cost = $product->shipping_cost;
+		$item->is_avaible = check_product_available_for_sale($product);
+		$item->purchase_type = 'product';
+		$item->quote_request_id = 0;
+		array_push($cart, $item);
+
+		$this->session->set_userdata('mds_shopping_cart', $cart);
+		return $item;
 	}
 
 	//add to cart quote
@@ -115,6 +145,41 @@ class Cart_model extends CI_Model
 			if (!empty($str)) {
 				$str = $str . ")";
 			}
+		}
+		return $str;
+	}
+
+	//api append selected variation
+	public function api_append_selected_variations($product_id)
+	{
+		$variations = $this->variation_model->get_product_variations_by_lang($product_id, $this->selected_lang->id);
+		$variations = array_map(function($item) {
+			return $this->variation_model->with_variation_option($item);
+		}, $variations);
+		/*var_dump($variations);*/
+		$str = "";
+		$variation_option_ids = $this->input->post('variation_option_ids', true);
+		foreach ($variation_option_ids as $variation_option_id) {
+			$text = "";
+			$variation_option = $this->variation_model->get_variation_options_by_option_common_id($variation_option_id);
+			if (count($variation_option) > 0) {
+				$variation_option = $variation_option[0];
+			} else {
+				continue;
+			}
+			$variation = $this->variation_model->get_variation_by_common_id($variation_option->variation_common_id)[0];
+			if ($variation->product_id == $product_id) {
+				if (empty($str)) {
+					$str .= "(" . $variation->label . ": " . $variation_option->option_text;
+				} else {
+					$str .= ", " . $variation->label . ": " . $variation_option->option_text;
+				}
+			}
+
+		}
+		
+		if (!empty($str)) {
+			$str .= ')';
 		}
 		return $str;
 	}

@@ -13,7 +13,7 @@ class Product extends RestController {
     }
 
 
-    public function products_get() {
+    public function product_get() {
         $params = $this->get_params();
         
         $skip = array_key_exists('skip', $params) ? $params['skip'] : 0;
@@ -25,6 +25,8 @@ class Product extends RestController {
             $this->db->offset($skip);
         }
 
+        //get data
+
         if (isset($id)) {
             $data = $this->product_model->get_product_by_id($id);
         }
@@ -34,9 +36,16 @@ class Product extends RestController {
     	   $data = $this->product_model->get_products();
         }
 
+
+        //get variation
+        $data = array_map(function($item){
+            return $this->product_model->with_variation($item);
+        }, $data);
+
     	$this->response($data, 200);
 
     }
+
 
     // public function product_post() {
     //    $this->load->model('upload_model');

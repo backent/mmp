@@ -304,4 +304,10 @@ class Variation_model extends CI_Model
         }
     }
 
+    public function with_variation_option($item) {
+        $options = $this->variation_model->get_variation_options_by_variation_common_id($item->common_id);
+        $item->variation_option = $options;
+        return $item;
+    }
+
 }

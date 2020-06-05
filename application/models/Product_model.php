@@ -1126,4 +1126,13 @@ class Product_model extends Core_Model
 		return false;
 	}
 
+	public function with_variation($item) {
+        $variations = $this->variation_model->get_product_variations($item->id);
+        $variations = array_map(function($item2) {
+        	return $this->variation_model->with_variation_option($item2);
+        }, $variations);
+        $item->variations = $variations;
+        return $item;
+    }
+
 }
