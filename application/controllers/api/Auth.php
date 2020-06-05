@@ -17,7 +17,7 @@ class Auth extends RestController {
             $data = array(
                 'result' => 1
             );
-            $this->response($data, 200);
+            $this->custom_response($data, 200);
         }
         //validate inputs
         $this->form_validation->set_rules('email', trans("email_address"), 'required|xss_clean|max_length[100]');
@@ -29,19 +29,19 @@ class Auth extends RestController {
             $data = array(
                 'result' => 1
             );
-            $this->response($data, 200);
+            $this->custom_response($data, 200);
         } else {
             $data = array(
                 'result' => 0,
                 'message' => 'Wrong email or password'
             );
-            $this->response($data, 422);
+            $this->custom_response($data, 422);
         }
     }
 
     public function logout_post() {
         $this->auth_model->logout();
-        $this->response([], 200);
+        $this->custom_response(null, 200);
     }
 
     public function register_post() {
@@ -58,15 +58,11 @@ class Auth extends RestController {
 
         //is email unique
         if (!$this->auth_model->is_unique_email($email)) {
-            $this->response([
-                'message' => trans("msg_email_unique_error")
-            ], 409);
+            $this->custom_response(null, 409, trans("msg_email_unique_error"));
         }
         //is username unique
         if (!$this->auth_model->is_unique_username($username)) {
-            $this->response([
-                'message' => trans("msg_email_unique_error")
-            ], 409);
+            $this->custom_response(null, 409, trans("msg_username_unique_error"));
         }
         //register
         $user_id = $this->auth_model->register();
@@ -76,12 +72,10 @@ class Auth extends RestController {
             $this->auth_model->update_slug($user->id);
             if ($this->general_settings->email_verification != 1) {
                 $this->auth_model->login_direct($user);
-                $this->response($user, 201);
+                $this->custom_response($user, 201);
             }
         } else {
-            $this->response([
-                'message' => trans("msg_error")
-            ], 409);
+            $this->custom_response(null, 409, trans("msg_error"));
         }
     }
 }

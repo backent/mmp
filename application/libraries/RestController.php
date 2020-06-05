@@ -2011,9 +2011,7 @@ class RestController extends Core_Controller
     }
 
     public function unauthenticated_user() {
-        $this->response([
-            'message' => "unauthenticated"
-        ], 401);
+        $this->custom_response(null, 401, 'Unauthorized');
     }
 
     public function auth_api() {
@@ -2031,9 +2029,34 @@ class RestController extends Core_Controller
 
     public function run_validation() {
         if ($this->form_validation->run() === false) {
-            $this->response([
-                'message' => validation_errors(null,null)
-            ], 400);
+            $this->custom_response(null, 400, validation_errors(null,null));
         }
+    }
+
+    public function custom_response($data, $code, $message = "") {
+
+        if (empty($message)) {
+            if ($code === 200) {
+                $message = "OK";                
+            } elseif ($code === 201) {
+                $message = "Created!";
+            } elseif ($code === 400) {
+                $message = "Bad Request!";
+            } elseif ($code === 403) {
+                $message = "Bad Request!";
+            } elseif ($code === 404) {
+                $message = "Not Found!";
+            } elseif ($code === 401) {
+                $message = "Unauthorized";
+            } elseif ($code === 500) {
+                $message = "Something Error";
+            }
+        }
+        
+        $this->response([
+            "data" => $data,
+            "message" => $message,
+            "status_code" => $code
+        ], $code);
     }
 }

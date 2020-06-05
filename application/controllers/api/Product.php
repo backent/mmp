@@ -42,7 +42,7 @@ class Product extends RestController {
             return $this->product_model->with_variation($item);
         }, $data);
 
-    	$this->response($data, 200);
+    	$this->custom_response($data, 200);
 
     }
 

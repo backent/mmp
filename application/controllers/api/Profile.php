@@ -13,15 +13,15 @@ class Profile extends RestController {
 
     public function my_get() {
         $this->auth_api();
-    	$this->response(user(), 200);
+    	$this->custom_response(user(), 200);
     }
 
     public function profile_get($slug) {
         $data = $this->auth_model->get_user_by_slug($slug);
         if (!isset($data)) {
-	        $this->response(['message' => 'Not Found!'], 404);
+	        $this->custom_response(null, 404);
         }
-        $this->response($data, 200);
+        $this->custom_response($data, 200);
     }
 
 }

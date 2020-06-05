@@ -15,7 +15,7 @@ class Cart extends RestController {
 
     public function list_get() {
     	$items = $this->cart_model->get_sess_cart_items();
-    	$this->response([$items], 200);
+    	$this->custom_response($items, 200);
     }
 
 
@@ -39,25 +39,19 @@ class Cart extends RestController {
 		if (!empty($product)) {
 
 			if ($product->status != 1) {
-				$this->response([
-					'message' => trans("msg_error_cart_unapproved_products")
-				], 200);
+                $this->custom_response(null, 200, trans("msg_error_cart_unapproved_products"));
 			} else {
 
 				$result = $this->cart_model->api_add_to_cart($product);
 				if ($result === false) {
-					$this->response([
-						'message' => "Out of Stock!"
-					], 200);
+                    $this->custom_response(null, 200, "Out of Stock!");
 				}
-					$this->response($result, 200);
+					$this->custom_response($result, 200);
 			}
 
 		}
 		else {
-			$this->response([
-				'message' => 'Not Found!'
-			], 404);
+            $this->custom_response(null, 404);
 		}
     }
 
@@ -73,9 +67,7 @@ class Cart extends RestController {
         }
 
         if (!isset($selected_item)) {
-            $this->response([
-                'message' => 'Not Found'
-            ], 404);
+            $this->custom_response(null, 404);
         }
 
         $cart = array_filter($cart, function($item) use ($id) {
@@ -85,7 +77,7 @@ class Cart extends RestController {
         $cart = array_values($cart);
         $this->session->set_userdata('mds_shopping_cart', $cart);
 
-        $this->response($cart, 200);
+        $this->custom_response($cart, 200);
 
 
     }
