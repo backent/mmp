@@ -35,9 +35,9 @@ class Cart_model extends CI_Model
 	// api add to cart
 	public function api_add_to_cart($product)
 	{
-		if (!$this->check_item_quantity($product)) {
+		/*if (!$this->check_item_quantity($product)) {
 			return false;
-		}
+		}*/
 		$cart = $this->get_sess_cart_items();
 		$quantity = $this->input->post('product_quantity', true);
 		$appended_variations = $this->api_append_selected_variations($product->id);
@@ -519,6 +519,8 @@ class Cart_model extends CI_Model
 
 		$my_shipping_address = $this->cart_model->get_sess_cart_shipping_address();
 
+		$list = [];
+
 		foreach ($cart_items as $key => $value) {
 			$shipping_provider_code = $data['shipping_provider'][$value->cart_item_id];
 			
@@ -526,6 +528,10 @@ class Cart_model extends CI_Model
 			$data_ship['destination'] = $my_shipping_address->shipping_city_id;
 			$data_ship['weight'] = 1;
 			$data_ship['courier'] = $shipping_provider_code;
+
+			if ($data_ship['destination'] == null) {
+				continue;
+			}
 
 			$json = __CURL_RAJA_ONGKIR('POST', '/cost', $data_ship);
 			$result = json_decode($json, true);	
@@ -602,6 +608,13 @@ class Cart_model extends CI_Model
 	{
 		if (!empty($this->session->userdata('mds_cart_shipping_address'))) {
 			$this->session->unset_userdata('mds_cart_shipping_address');
+		}
+	}
+
+	public function unset_sess_cart_shipping_items()
+	{
+		if (!empty($this->session->userdata('mds_cart_shipping_item'))) {
+			$data = $this->session->unset_userdata('mds_cart_shipping_item');
 		}
 	}
 }

@@ -19,5 +19,13 @@ $route['api/cart']['GET'] = "api/cart/list";
 $route['api/cart']['POST'] = "api/cart/add";
 $route['api/cart/(:any)'] = "api/cart/remove/$1";
 
+$route['api/shipping']['GET'] = "api/shipping/my";
+$route['api/shipping']['POST'] = "api/shipping/add";
+
+$route['api/order'] = "api/order";
+$route['api/order/checkout'] = "api/order/checkout";
+
+$route['api/rajaongkir/(:any)']['GET'] = "api/rajaOngkir/$1";
+$route['api/rajaongkir/(:any)']['POST'] = "api/rajaOngkir/post/$1";
 
 

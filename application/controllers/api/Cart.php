@@ -11,11 +11,19 @@ class Cart extends RestController {
         // Construct the parent class
         parent::__construct();
         $this->auth_api();
+        $this->cart_model->calculate_cart_total();
     }
 
     public function list_get() {
     	$items = $this->cart_model->get_sess_cart_items();
-    	$this->custom_response($items, 200);
+        $total = $this->cart_model->get_sess_cart_total();
+    	$this->custom_response([
+            "items" => $items,
+            "total" => $total,
+            "shipping_address" => $this->cart_model->get_sess_cart_shipping_address()
+
+
+        ], 200);
     }
 
 

@@ -1135,4 +1135,15 @@ class Product_model extends Core_Model
         return $item;
     }
 
+    public function with_images($item) {
+        $item->images = $this->file_model->get_product_images($item->id);
+        $item->images = array_map(function($item2) {
+        	$item2->image_default = get_product_image_url($item2, 'image_default');
+        	$item2->image_big = get_product_image_url($item2, 'image_big');
+        	$item2->image_small = get_product_image_url($item2, 'image_small');
+        	return $item2;
+        }, $item->images);
+        return $item;
+    }
+
 }

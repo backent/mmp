@@ -38,9 +38,19 @@ class Product extends RestController {
 
 
         //get variation
-        $data = array_map(function($item){
-            return $this->product_model->with_variation($item);
-        }, $data);
+        if (gettype($data) == 'object') {
+            $data = $this->product_model->with_variation($data); 
+            $data = $this->product_model->with_images($data); 
+        } elseif (gettype($data) == 'array') {
+            $data = array_map(function($item){
+                return $this->product_model->with_variation($item);
+            }, $data);
+
+            $data = array_map(function($item){
+                return $this->product_model->with_images($item);
+            }, $data);
+
+        }
 
     	$this->custom_response($data, 200);
 
